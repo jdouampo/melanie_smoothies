@@ -1,41 +1,51 @@
+# Import python packages
 import streamlit as st
+import snowflake.connector
 
 st.title(f":cup_with_straw: Customize Your Smoothie :cup_with_straw:")
 st.write("Choose the fruits you want in your custom Smoothie!")
 
-# Gestion de la connexion Snowflake
+# Connexion directe Snowflake
 @st.cache_resource
-def init_connection():
-    try:
-        # Essayer d'abord la méthode Streamlit
-        return st.connection("snowflake").session()
-    except:
-        st.error("""
-        ⚠️ Configuration Snowflake manquante !
-        
-        Ajoutez dans votre fichier `.streamlit/config.toml` :
-        ```toml
-        [connections.snowflake]
-        account = "BJSNGCA-OAB95177"
-        user = "JMDOUAMPO"
-        password = "votre_mot_de_passe"
-        role = "SYSADMIN"
-        warehouse = "COMPUTE_WH"
-        database = "SMOOTHIES"
-        schema = "PUBLIC"
-        ```
-        """)
-        return None
+def get_snowflake_conn():
+    return snowflake.connector.connect(
+        account='BJSNGCA-OAB95177',
+        user='JMDOUAMPO',
+        password='XXXXXXXXXXXXXXXXXX',  # Ton mot de passe
+        role='SYSADMIN',
+        warehouse='COMPUTE_WH',  # ⚠️ IMPORTANT: spécifie un warehouse
+        database='SMOOTHIES',
+        schema='PUBLIC'
+    )
 
-session = init_connection()
-
-if session:
+try:
+    conn = get_snowflake_conn()
+    cursor = conn.cursor()
     st.success("✅ Connexion Snowflake établie !")
     
-    # Votre application continue ici
+    # Test de connexion
+    cursor.execute("SELECT CURRENT_DATABASE(), CURRENT_SCHEMA()")
+    db, schema = cursor.fetchone()
+    st.write(f"📊 Base de données: {db}, Schéma: {schema}")
+    
+    # Votre application...
     name_on_order = st.text_input('Name on Smoothie:')
     st.write('The name on your Smoothie will be:', name_on_order)
     
-    # Exemple d'utilisation de la session
-    fruits_df = session.table("SMOOTHIES.PUBLIC.FRUITS").limit(5).collect()
-    st.write("Quelques fruits disponibles:", fruits_df)
+    # Exemple: Lister les tables
+    cursor.execute("SHOW TABLES IN SMOOTHIES.PUBLIC")
+    tables = cursor.fetchall()
+    st.write("📋 Tables disponibles:")
+    for table in tables:
+        st.write(f"- {table[1]}")
+        
+    cursor.close()
+    
+except Exception as e:
+    st.error(f"❌ Erreur: {e}")
+    st.info("""
+    **Vérifie:**
+    1. Ton mot de passe Snowflake
+    2. Que le warehouse 'COMPUTE_WH' existe
+    3. Que ton compte est actif
+    """)
