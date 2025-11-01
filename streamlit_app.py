@@ -52,7 +52,8 @@ try:
             
 
             smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/watermelon")
-            sf_df = st.dataframe(data=smoothiefroot_response.json(),use_container_with=True)
+            st.text(smoothiefroot_response.json())
+            #sf_df = st.dataframe(data=smoothiefroot_response.json(),use_container_with=True)
 
 
 except Exception as e:
