@@ -1,46 +1,39 @@
-# Import python packages
-import streamlit as st
-from snowflake.snowpark.functions import col
-
-
-cnx = st.connection("snowflake")
-session = cnx.session()
-# Write directly to the app
 st.title(f":cup_with_straw: Customize Your Smoothie :cup_with_straw:")
-st.write(
-  """Choose the fruits you wants in your custom Smoothie!
-  """
-)
+st.write("Choose the fruits you want in your custom Smoothie!")
 
-name_on_sorder = st.text_input("Name on Smoothie", "")
-st.write("The name on Smoothies will be", name_on_sorder)
-
-
-#Affichage du DataFr
-my_dataframe = session.table("smoothies.public.fruit_options").select(col("fruit_name"))
-#st.dataframe(data=my_dataframe, use_container_width=True)
-
-ingredients_list =  st.multiselect(
-    "Choose up to 5 ingredients",
-    my_dataframe,
-    max_selections =5
-)
-#st.write(ingredients_list)
-#st.text(ingredients_list)
-
-if ingredients_list:
-    ingredients_string =''
-    for fruit_chosen in ingredients_list:
-        ingredients_string+=fruit_chosen + ' '
+# Gestion de la connexion Snowflake
+@st.cache_resource
+def init_connection():
+    try:
+        # Essayer d'abord la méthode Streamlit
+        return st.connection("snowflake").session()
+    except:
+        st.error("""
+        ⚠️ Configuration Snowflake manquante !
         
-    #my_insert_stmt = """ insert into smoothies.public.orders (ingredients, name_on_order) values('"""+ingredients_string+"""','"""+name_on_sorder+"""')"""
-    my_insert_stmt = f"""INSERT INTO smoothies.public.orders (ingredients, name_on_order)VALUES ('{ingredients_string}', '{name_on_sorder}')"""
+        Ajoutez dans votre fichier `.streamlit/config.toml` :
+        ```toml
+        [connections.snowflake]
+        account = "BJSNGCA-OAB95177"
+        user = "JMDOUAMPO"
+        password = "votre_mot_de_passe"
+        role = "SYSADMIN"
+        warehouse = "COMPUTE_WH"
+        database = "SMOOTHIES"
+        schema = "PUBLIC"
+        ```
+        """)
+        return None
+
+session = init_connection()
+
+if session:
+    st.success("✅ Connexion Snowflake établie !")
     
-    time_to_insert = st.button('Submet Order')
-        
-    if time_to_insert:
-        session.sql(my_insert_stmt).collect()
-        st.success('Your Smoothie is ordered, '+ name_on_sorder, icon="✅")
-        
-#my_dataframe = session.table("smoothies.public.orders").filter(col("ORDER_FILLED")==0).collect()        
-        
+    # Votre application continue ici
+    name_on_order = st.text_input('Name on Smoothie:')
+    st.write('The name on your Smoothie will be:', name_on_order)
+    
+    # Exemple d'utilisation de la session
+    fruits_df = session.table("SMOOTHIES.PUBLIC.FRUITS").limit(5).collect()
+    st.write("Quelques fruits disponibles:", fruits_df)
