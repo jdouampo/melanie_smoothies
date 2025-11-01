@@ -22,34 +22,34 @@ try:
     conn = get_snowflake_conn()
    # decrire l'activite
     name_on_sorder = st.text_input("Name on Smoothie", "")
-st.write("The name on Smoothies will be", name_on_sorder)
+    st.write("The name on Smoothies will be", name_on_sorder)
 
 
-#Affichage du DataFr
-my_dataframe = session.table("smoothies.public.fruit_options").select(col("fruit_name"))
-#st.dataframe(data=my_dataframe, use_container_width=True)
-
-ingredients_list =  st.multiselect(
-    "Choose up to 5 ingredients",
-    my_dataframe,
-    max_selections =5
-)
+    #Affichage du DataFr
+    my_dataframe = session.table("smoothies.public.fruit_options").select(col("fruit_name"))
+    #st.dataframe(data=my_dataframe, use_container_width=True)
+    
+    ingredients_list =  st.multiselect(
+        "Choose up to 5 ingredients",
+        my_dataframe,
+        max_selections =5
+    )
 #st.write(ingredients_list)
 #st.text(ingredients_list)
 
-if ingredients_list:
-    ingredients_string =''
-    for fruit_chosen in ingredients_list:
-        ingredients_string+=fruit_chosen + ' '
+    if ingredients_list:
+        ingredients_string =''
+        for fruit_chosen in ingredients_list:
+            ingredients_string+=fruit_chosen + ' '
+            
+        #my_insert_stmt = """ insert into smoothies.public.orders (ingredients, name_on_order) values('"""+ingredients_string+"""','"""+name_on_sorder+"""')"""
+        my_insert_stmt = f"""INSERT INTO smoothies.public.orders (ingredients, name_on_order)VALUES ('{ingredients_string}', '{name_on_sorder}')"""
         
-    #my_insert_stmt = """ insert into smoothies.public.orders (ingredients, name_on_order) values('"""+ingredients_string+"""','"""+name_on_sorder+"""')"""
-    my_insert_stmt = f"""INSERT INTO smoothies.public.orders (ingredients, name_on_order)VALUES ('{ingredients_string}', '{name_on_sorder}')"""
-    
-    time_to_insert = st.button('Submet Order')
-        
-    if time_to_insert:
-        session.sql(my_insert_stmt).collect()
-        st.success('Your Smoothie is ordered, '+ name_on_sorder, icon="✅")
+        time_to_insert = st.button('Submet Order')
+            
+        if time_to_insert:
+            session.sql(my_insert_stmt).collect()
+            st.success('Your Smoothie is ordered, '+ name_on_sorder, icon="✅")
         
 #my_dataframe = session.table("smoothies.public.orders").filter(col("ORDER_FILLED")==0).collect()        
 
