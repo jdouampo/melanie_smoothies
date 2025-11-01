@@ -24,7 +24,7 @@ except Exception as e:
 
 # Interface utilisateur
 name_on_order = st.text_input("Name on Smoothie", "")
-st.write("The name on Smoothies will be", name_on_order)
+st.write("The name on Smoothie will be", name_on_order)
 
 # Charger les fruits
 try:
@@ -41,12 +41,26 @@ try:
         ingredients_string = ' '.join(ingredients_list)
         
         if st.button('Submit Order'):
-            # Insérer avec Snowpark
-            order_data = [(ingredients_string, name_on_order)]
-            order_df = session.create_dataframe(order_data, schema=["INGREDIENTS", "NAME_ON_ORDER"])
-            order_df.write.mode("append").save_as_table("orders")
+            # Méthode avec SQL parameterisé (plus sécurisée)
+            insert_sql = """
+            INSERT INTO smoothies.public.orders (name_on_order, ingredients) 
+            VALUES (:1, :2)
+            """
+            session.sql(insert_sql, params=[name_on_order, ingredients_string]).collect()
             
             st.success(f'Your Smoothie is ordered, {name_on_order}! ✅')
+            
+            # Optionnel: Afficher les commandes récentes
+            st.subheader("Recent Orders")
+            recent_orders = session.sql("""
+                SELECT name_on_order, ingredients, order_ts 
+                FROM smoothies.public.orders 
+                ORDER BY order_ts DESC 
+                LIMIT 5
+            """).collect()
+            
+            for order in recent_orders:
+                st.write(f"**{order['NAME_ON_ORDER']}**: {order['INGREDIENTS']} - {order['ORDER_TS']}")
 
 except Exception as e:
     st.error(f"Error: {e}")
