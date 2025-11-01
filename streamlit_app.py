@@ -51,7 +51,7 @@ try:
             ingredients_string += fruit_chosen + ' '
             
         # Using parameterized query to prevent SQL injection
-        my_insert_stmt = """INSERT INTO smoothies.public.orders (ingredients, name_on_order) 
+        my_insert_stmt = """INSERT INTO smoothies.public.orders (ingredients, name_on_sorder) 
                             VALUES (%s, %s)"""
         
         time_to_insert = st.button('Submit Order')
