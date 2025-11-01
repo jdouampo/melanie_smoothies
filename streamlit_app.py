@@ -39,8 +39,10 @@ try:
 
     if ingredients_list and name_on_order:
         ingredients_string = ' '.join(ingredients_list)
-        smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/watermelon")
-        sf_df = st.dataframe(data=smoothiefroot_response.json(),use_container_width=True)
+        for fruit_chosen in ingredients_string:
+            st.subheader(fruit_chosen+ "Nutrition information")
+            smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/watermelon"+fruit_chosen)
+            sf_df = st.dataframe(data=smoothiefroot_response.json(),use_container_width=True)
         
         if st.button('Submit Order'):
             # Méthode avec SQL parameterisé (plus sécurisée)
