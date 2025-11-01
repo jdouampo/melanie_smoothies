@@ -28,8 +28,7 @@ st.write("The name on Smoothie will be", name_on_order)
 
 # Charger les fruits
 try:
-    fruits_df = session.table("smoothies.public.fruit_options")
-    fruits_list = fruits_df.select("FRUIT_NAME").to_pandas()["FRUIT_NAME"].tolist()
+    fruits_list = session.table("smoothies.public.fruit_options").select(col("fruit_name"),col("search_on"))
     
     ingredients_list = st.multiselect(
         "Choose up to 5 ingredients",
