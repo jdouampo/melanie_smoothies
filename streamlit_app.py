@@ -48,7 +48,7 @@ try:
         time_to_insert = st.button('Submet Order')
             
         if time_to_insert:
-            session.sql(my_insert_stmt).collect()
+            conn.sql(my_insert_stmt).collect()
             st.success('Your Smoothie is ordered, '+ name_on_sorder, icon="✅")
         
 #my_dataframe = session.table("smoothies.public.orders").filter(col("ORDER_FILLED")==0).collect()        
