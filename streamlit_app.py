@@ -42,6 +42,7 @@ try:
             ingredients_string += fruit_chosen + ' '
             st.subheader(fruit_chosen + " Nutrition information")
             smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/" + fruit_chosen.lower())
+            sf_df = st.dataframe(data=smoothiefroot_response.json(),use_container_width=True)
         
         # CORRECTION : URL correcte pour l'API
         #smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/" + fruit_chosen.lower())
