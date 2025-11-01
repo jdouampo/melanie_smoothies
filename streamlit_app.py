@@ -3,7 +3,6 @@ import streamlit as st
 import snowflake.connector
 
 st.title(f":cup_with_straw: Customize Your Smoothie :cup_with_straw:")
-st.write("Choose the fruits you want in your custom Smoothie!")
 
 # Connexion directe Snowflake
 @st.cache_resource
@@ -20,7 +19,11 @@ def get_snowflake_conn():
 
 try:
     conn = get_snowflake_conn()
-   # decrire l'activite
+     
+except Exception as e:
+    st.error(f"❌ Erreur: {e}")
+
+ # decrire l'activite
     name_on_sorder = st.text_input("Name on Smoothie", "")
     st.write("The name on Smoothies will be", name_on_sorder)
 
@@ -51,8 +54,4 @@ try:
             conn.sql(my_insert_stmt).collect()
             st.success('Your Smoothie is ordered, '+ name_on_sorder, icon="✅")
         
-#my_dataframe = session.table("smoothies.public.orders").filter(col("ORDER_FILLED")==0).collect()        
-
-except Exception as e:
-    st.error(f"❌ Erreur: {e}")
-   
+#my_dataframe = session.table("smoothies.public.orders").filter(col("ORDER_FILLED")==0).collect()     
