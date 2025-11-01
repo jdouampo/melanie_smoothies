@@ -28,8 +28,8 @@ st.write("The name on Smoothie will be", name_on_order)
 
 # Charger les fruits
 try:
-    fruits_list = session.table("smoothies.public.fruit_options").select(col("fruit_name"),col("search_on"))
-    
+    #fruits_list = session.table("smoothies.public.fruit_options").select(col("fruit_name"),col("search_on"))
+    fruits_list = session.table("smoothies.public.fruit_options").select("fruit_name", "search_on")
     ingredients_list = st.multiselect(
         "Choose up to 5 ingredients",
         fruits_list,
