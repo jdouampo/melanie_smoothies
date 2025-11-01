@@ -9,13 +9,13 @@ st.write("Choose the fruits you want in your custom Smoothie!")
 @st.cache_resource
 def get_snowflake_conn():
     return snowflake.connector.connect(
-        account: 'BJSNGCA-OAB95177',
-            user: 'JMDOUAMPO',
-            password: 'Meira29!122812',  # Remplace par ton vrai mot de passe
-            role: 'SYSADMIN',
-            database: 'SMOOTHIES',
-            schema: 'PUBLIC',
-            client_session_keep_alive : 'true'
+        account= 'BJSNGCA-OAB95177',
+            user= 'JMDOUAMPO',
+            password= 'Meira29!122812',  # Remplace par ton vrai mot de passe
+            role= 'SYSADMIN',
+            database= 'SMOOTHIES',
+            schema= 'PUBLIC',
+            client_session_keep_alive = 'true'
     )
 
 try:
