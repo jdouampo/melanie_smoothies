@@ -51,7 +51,7 @@ try:
             ingredients_string += fruit_chosen + ' '
             
         # Using parameterized query to prevent SQL injection
-        my_insert_stmt = """INSERT INTO smoothies.public.orders (ingredients, name_on_sorder) 
+        my_insert_stmt = """INSERT INTO smoothies.public.orders (ingredients, name_on_order) 
                             VALUES (%s, %s)"""
         
         time_to_insert = st.button('Submit Order')
@@ -67,15 +67,3 @@ try:
 except Exception as e:
     st.error(f"Error loading fruits: {e}")
 
-# Optional: Display recent orders
-if st.checkbox("Show recent orders"):
-    try:
-        recent_orders = session.sql("SELECT * FROM smoothies.public.orders ORDER BY ordered_at DESC LIMIT 10").collect()
-        if recent_orders:
-            st.write("Recent Orders:")
-            for order in recent_orders:
-                st.write(f"- {order['NAME_ON_ORDER']}: {order['INGREDIENTS']}")
-        else:
-            st.write("No orders found.")
-    except Exception as e:
-        st.error(f"Error loading orders: {e}")
