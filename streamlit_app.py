@@ -3,7 +3,7 @@ import streamlit as st
 from snowflake.snowpark.functions import col
 
 
-cnx =st.connection("snowflake")
+cnx = st.connection("snowflake")
 session = cnx.session()
 # Write directly to the app
 st.title(f":cup_with_straw: Customize Your Smoothie :cup_with_straw:")
