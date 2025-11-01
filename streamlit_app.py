@@ -1,7 +1,7 @@
 # Import python packages
 import streamlit as st
 from snowflake.snowpark import Session
-
+import requests
 st.title(f":cup_with_straw: Customize Your Smoothie :cup_with_straw:")
 
 # Configuration Snowflake
@@ -50,17 +50,10 @@ try:
             
             st.success(f'Your Smoothie is ordered, {name_on_order}! ✅')
             
-            # Optionnel: Afficher les commandes récentes
-            st.subheader("Recent Orders")
-            recent_orders = session.sql("""
-                SELECT name_on_order, ingredients, order_ts 
-                FROM smoothies.public.orders 
-                ORDER BY order_ts DESC 
-                LIMIT 5
-            """).collect()
-            
-            for order in recent_orders:
-                st.write(f"**{order['NAME_ON_ORDER']}**: {order['INGREDIENTS']} - {order['ORDER_TS']}")
+
+            smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/watermelon")
+            st.text(smoothiefroot_response)
+
 
 except Exception as e:
     st.error(f"Error: {e}")
